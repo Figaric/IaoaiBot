@@ -9,7 +9,7 @@ type EventActionType = (res: Response, object?: any) => void;
 
 type EventActionsType = { 
     confirmation: EventActionType
-    board_post_new: EventActionType
+    wall_post_new: EventActionType
 }
 
 export default class VkController {
