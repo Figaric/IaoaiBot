@@ -39,10 +39,9 @@ const main = async () => {
                     confirmation: (res: Response) => {
                         return res.send("186fe5ac");
                     },
-                    board_post_new: (_, object) => {
-                        message.channel.send(object.text);
-
-                        console.log("board_post_new response: ", object);
+                    wall_post_new: async (_, object) => {
+                        await message.channel.send(object.attachments);
+                        await message.channel.send(object.text);
                     }
                 });
 
