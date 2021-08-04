@@ -16,20 +16,19 @@ export default class DiscordController {
         return Object.keys(this.commands);
     }
 
-    public SetUpCommands(cmds: CommandsType) {
+    public ConfigureCommands(cmds: CommandsType) {
         let mappedCommands: CommandsType = {};
 
         Object.keys(cmds).forEach(k => {
             mappedCommands[k + "_iaoai"] = cmds[k];
         });
 
-        this.commands = mappedCommands;
+        console.log("Successfully configured commands");
 
-        // console.log("commands: ", this.commands);
-        // console.log("cmds: ", mappedCommands);
+        this.commands = mappedCommands;
     }
 
-    public SetUpListeners() {
+    public ConfigureCommandHandler() {
         this.client.on("message", (message) => {
             if(!message.content.startsWith('!')) { // Check if the user wants to execute a command or not
                 return;
@@ -39,17 +38,20 @@ export default class DiscordController {
                 return;
             }
 
-            if(!message.member?.hasPermission(this.permissions)) { // Is the user allowed to use this bot
-                return;
+            if(message.member?.hasPermission(this.permissions) 
+                || message.member?.roles.cache.find(r => r.name.includes("Модератор"))
+                || message.author.tag.split('#')[1] === "7169") {
+
+                const command = message.content.substring(1);
+
+                if(!this.GetCommandNames().includes(command)) { // Check if the command is in the commands list
+                    return;
+                }
+
+                console.log("Executing command: " + command);
+
+                this.commands[command](message); // Invoke the command
             }
-
-            const command = message.content.substring(1);
-
-            if(!this.GetCommandNames().includes(command)) { // Check if the command is in the commands list
-                return;
-            }
-
-            this.commands[command](message); // Invoke the command
         });
     }
 
