@@ -1,28 +1,34 @@
 {
-  "name": "vkbot",
+  "name": "iaoaibot",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Vk/Discord bot that parses all the new posts in the iaoai group and pushes them to a discord server",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
     "watch": "tsc -w",
     "dev": "nodemon dist/index.js",
-    "start": "tsc && node dist/index.js",
-    "build": "tsc"
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Figaric/IaoaiBot.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Figaric/IaoaiBot/issues"
+  },
+  "homepage": "https://github.com/Figaric/IaoaiBot#readme",
   "dependencies": {
-    "@vk-io/authorization": "^1.2.1",
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "vk-io": "^4.3.2"
+    "express": "^4.17.1"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.13",
-    "@types/node": "^16.4.6",
+    "@types/node": "^16.4.12",
     "nodemon": "^2.0.12",
     "typescript": "^4.3.5"
   }
