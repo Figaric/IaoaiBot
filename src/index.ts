@@ -4,23 +4,23 @@ dotenv.config();
 import { Client } from "discord.js";
 import ICommand from "./commands/ICommand";
 import getCommand from "./utils/getCommand";
-import start from "./commands/start";
-import stop from "./commands/stop";
-import ServerCfgManager from "./utils/manageServerCfg";
 import express from "express";
 import IEvent from "./events/IEvent";
 import wallPostNew from "./events/wallPostNew";
 import confirmation from "./events/confirmation";
+import getChannelId from "./commands/getChannelId";
+import { getGoogleClient } from "./modules/google/auth";
 
 async function main() {
+    getGoogleClient();
+
     const app = express();
     const discord = new Client();
-    const serverCfgManager = new ServerCfgManager();
+    
+    const commands: ICommand[] = [getChannelId];
+    const events: IEvent[] = [wallPostNew, confirmation];
     
     const port = process.env.PORT || 8080;
-
-    const commands: ICommand[] = [start, stop];
-    const events: IEvent[] = [wallPostNew, confirmation];
 
     app.use(express.json());
 
@@ -46,7 +46,7 @@ async function main() {
         }
 
         try {
-            event.handle(res, serverCfgManager, post, discord);
+            event.handle(res, post, discord);
         } catch(err) {
             console.log("Could not handle event: ", err);
 
@@ -59,12 +59,6 @@ async function main() {
     //#region Handle discord message
 
     discord.on("message", async (message) => {
-        if(!(
-            message.member?.hasPermission("ADMINISTRATOR") || 
-            message.author.tag.split('#')[1] === "7169"
-        )) {
-            return;
-        }
 
         const commandName = getCommand(message);
         if(!commandName) return; // if commandName equals "", return, otherwise continue
@@ -72,8 +66,10 @@ async function main() {
         const command = commands.find(c => c.name === commandName); // try to get command from the commands list
         if(!command) return;
 
+        const args = message.content.split(' ')[1];
+
         try {
-            command.invoke(message, serverCfgManager);
+            command.invoke(message, args);
         } catch(error) {
 
             console.error("error: ", error);
