@@ -1,9 +1,11 @@
+import { DMChannel } from "discord.js";
+import { getChannelId } from "../modules/google/sheets";
 import IEvent from "./IEvent";
 
 export default {
     name: "wall_post_new",
-    handle: async (res, serverCfg, { attachments }, discord) => {
-        const channelId = serverCfg.GetChannelId();
+    handle: async (res, { attachments }, discord) => {
+        const channelId = await getChannelId();
 
         if(!channelId) {
             res.status(400).send("Server is not started").end();
@@ -19,9 +21,11 @@ export default {
         const videoUrl = `https://vk.com/club${Math.abs(attachedVideo.owner_id)}?z=video${attachedVideo.owner_id}_${attachedVideo.id}%2F${attachedVideo.access_key}%2Fpl_wall_${attachedVideo.owner_id}`;
         const videoImage = attachedVideo.image.find((i: any) => i.height === 450)!.url;
         
-        const channel = discord.channels.cache.get(channelId) as any;
+        const channel = discord.channels.cache.get(channelId) as DMChannel;
 
-        channel.send(`${attachedVideo.title}\n${videoImage}\n${videoUrl}`);
+        await channel.send(attachedVideo.title);
+        await channel.send(videoImage);
+        await channel.send(videoUrl);
 
         console.log("Successfully handled new meme");
 
